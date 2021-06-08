@@ -13,16 +13,15 @@ class Contact extends Component {
 
     constructor(props) {
         super(props);
-        
         this.handleSubmit = this.handleSubmit.bind(this);
-        
     }
     
-    handleSubmit(value) {
-        console.log('Current state is:' + JSON.stringify(this.value));
-        alert('Current state is:' + JSON.stringify(this.value));
-        this.props.resetFeedbackForm();
-    }
+    handleSubmit = (values) => {
+        console.log('Current feedback is:' + JSON.stringify(values));
+        alert('Current feedback is:' + JSON.stringify(values));
+        this.props.postFeedback(this.props.id,values.firstname,values.lastname,values.telnum,values.email.values.contactType, values.message, values.date);
+        //this.props.resetFeedbackForm();
+    };
     
     render() {
         return (
@@ -204,7 +203,6 @@ class Contact extends Component {
                                         Send feedback
                                     </Button>
                                 </Col>
-
                             </Row>
                         </Form>
                     </div>

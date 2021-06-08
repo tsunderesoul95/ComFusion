@@ -16,7 +16,7 @@ export const postComment = (dishId, rating, author, comment) => (dispatch) => {
     };
     newComment.date = new Date().toISOString();
     return fetch(baseUrl + 'comments', {
-        method: 'POST',
+        method: "POST",
         body: JSON.stringify(newComment),
         headers: {
             "Content-Type": "application/json"
@@ -43,6 +43,48 @@ export const postComment = (dishId, rating, author, comment) => (dispatch) => {
             console.log('Post comments', error.message);
             alert('Your comment could not be posted' + error.message);
         })
+}
+export const postFeedback = (id, firstname, lastname, telnum, email, agree, contactType, message, date) => (dispatch) => {
+    const newFeedback = {
+        id: id,
+        firstname: firstname,
+        lastname: lastname,
+        telnum: telnum,
+        email: email,
+        agree: agree,
+        contactType: contactType,
+        message: message,
+        date: date
+    };
+    newFeedback.date = new Date().toISOString();
+    return fetch(baseUrl + 'feedback', {
+        method: "POST",
+        body: JSON.stringify(newFeedback),
+        headers: {
+            "Content-type": "application/json"
+        },
+        credentials: "same-origin"
+    })
+        .then(response => {
+            if (response.ok) {
+                return response;
+            }
+            else {
+                var error = new Error('Error' + response.status + ':' + response.statusText);
+                error.response = response;
+                throw error;
+            }
+        },
+            error => {
+                //var errmess = new Error(error.message);
+                throw error;
+            })
+            .then(response => response.json())
+            .then(response => dispatch(addComment(response)))
+            .catch(error => {
+                console.log('Post comments',error.message);
+                alert('Your feedback could not be posted'+ error.message);
+            })
 }
 export const fetchDishes = () => (dispatch) => {
     dispatch(dishesLoading(true));
@@ -97,7 +139,7 @@ export const fetchComments = () => (dispatch) => {
                 throw errmess;
             })
         .then(response => response.json())
-        .then(comments => dispatch(addComments(comments)))
+        .then(comments => dispatch(addComment(comments)))
         .catch(error => dispatch(commentsFailed(error.message)));
 
 }
@@ -105,9 +147,9 @@ export const commentsFailed = (errmess) => ({
     type: ActionTypes.COMMENTS_FAILED,
     payload: errmess
 });
-export const addComments = (comments) => ({
-    type: ActionTypes.ADD_COMMENTS,
-    payload: comments
+export const addFeedback = (feedback) => ({
+    type: ActionTypes.ADD_FEEDBACK,
+    payload: feedback
 });
 export const fetchPromos = () => (dispatch) => {
     dispatch(promosLoading(true));
@@ -148,3 +190,40 @@ export const addPromos = (promos) => ({
     payload: promos
 });
 
+export const fetchLeaders = () => (dispatch) => {
+    dispatch(leaderLoading(true));
+
+    // setTimeout(() => {
+    //     dispatch(addDishes(DISHES));
+    // },2000);
+    return fetch(baseUrl + 'leaders')
+        .then(response => {
+            if (response.ok) {
+                return response
+            }
+            else {
+                var error = new Error('Error' + response.status + ':' + response.statusText)
+                error.response = response;
+                throw error;
+            }
+        },
+            error => {
+                var errmess = new Error(error.message);
+                throw errmess;
+            })
+        .then(response => response.json())
+        .then(leader => dispatch(addLeader(leader)))
+        .catch(error => dispatch(leaderFailed(error.message)));
+
+}
+export const leaderLoading = () => ({
+    type: ActionTypes.LEADERS_LOADING
+});
+export const leaderFailed = (errmess) => ({
+    type: ActionTypes.LEADERS_FAILED,
+    payload: errmess
+});
+export const addLeader = (leader) => ({
+    type: ActionTypes.ADD_LEADER,
+    payload: leader
+});
